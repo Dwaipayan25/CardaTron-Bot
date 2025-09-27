@@ -1,0 +1,18 @@
+{
+  "name": "agentic-web3-chatbot",
+  "version": "1.0.0",
+  "description": "A conversational AI agent for Web3 operations",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+  },
+  "keywords": ["web3", "ai", "chatbot", "metta", "voice"],
+  "author": "EthGlobal",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }  
+}
