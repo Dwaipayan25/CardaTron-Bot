@@ -1,9 +1,8 @@
 # Dependencies
 node_modules/
 */node_modules/
-.env/
 */.venv/
-*/.env/
+
 
 # Production builds
 build/
