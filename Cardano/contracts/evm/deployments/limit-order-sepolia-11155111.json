@@ -1,0 +1,16 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contracts": {
+    "limitOrderProtocol": "0x15FEc45f2e0578216b9Ff871999237D96546fE36"
+  },
+  "config": {
+    "name": "Atomic Swap Limit Order Protocol",
+    "version": "1.0.0"
+  },
+  "deployedAt": "2025-09-23T14:55:15.451Z",
+  "gasUsed": {
+    "limitOrderProtocol": "2186135",
+    "total": "2186135"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contracts": {
+    "accessToken": "0x3e70bE1e5C2939A352a45264D1dF8B8efe9BE170",
+    "cardanoEscrowFactory": "0xb47F5269d4A06D1cFD428aD239FEBBDAA19Ecf67",
+    "limitOrderProtocol": "0x15FEc45f2e0578216b9Ff871999237D96546fE36",
+    "cardanoEscrowSrcImplementation": "0xF1B52Bb9EAf06c9d1BcDD4cff16CDE47F9a21aCD",
+    "cardanoEscrowDstImplementation": "0x6c6d2E859422FcD4aec2b8f8dCda6f6c735daEE8"
+  },
+  "config": {
+    "rescueDelaySrc": 604800,
+    "rescueDelayDst": 604800
+  },
+  "deployedAt": "2025-09-23T14:57:26.351Z",
+  "gasUsed": {
+    "accessToken": "1181491",
+    "cardanoEscrowFactory": "4570524",
+    "total": "5752015"
+  }
+}

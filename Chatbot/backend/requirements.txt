@@ -1,0 +1,7 @@
+# Python dependencies for uAgents and Fetch.ai integration
+uagents>=0.19.0
+requests>=2.31.0
+websockets>=10.4,<11.0
+aiohttp>=3.8.5
+pydantic>=2.8,<2.9
+cryptography>=41.0.0
