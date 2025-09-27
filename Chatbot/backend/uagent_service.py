@@ -41,15 +41,6 @@ async def send_periodic_request(ctx: Context):
     print("[DEBUG] Sending request to DecentraBot...")
     await ctx.send(DECENTRABOT_ID, req)
 
-async def send_request():
-    req = Web3Request(
-        operation="check_balance",
-        params={},
-        user_id="user123",
-        request_id="req1"
-    )
-    print("[DEBUG] Sending request to DecentraBot...")
-    await client.send(DECENTRABOT_ID, req)  # fire-and-forget
 
 
 

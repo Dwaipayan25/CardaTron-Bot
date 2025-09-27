@@ -8,9 +8,11 @@ const UAgentBridge = require('./services/uagentBridge');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const API_BASE = 'http://127.0.0.1:8002'
 
 // Initialize uAgent Bridge
 const uagentBridge = new UAgentBridge();
+const messages = []
 
 // Middleware
 app.use(cors());
@@ -34,34 +36,84 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/api/process-query', async (req, res) => {
   try {
     const { query } = req.body;
-    if (!query) return res.status(400).json({ error: 'Query is required' });
+    if (!query) return res.status(400).json({ error: 'Query is required' });// Basic requirement
+    console.log('Processing query:', query);// logging the query
 
-    console.log('Processing query:', query);
+    const messages = [
+      {
+        role: "user", // must match your Pydantic Role enum
+        content: query,
+        tool_calls: null
+      }
+    ];
 
-    // Step 1: NLU - Convert natural language to intent
-    const intent = await processQuery(query);
-    console.log('Detected intent:', intent);
+    const resp = await fetch(`${API_BASE}/api/chat`,{
+      
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ messages, stream: false })
 
-    // Step 2: MeTTa reasoning
-    const mettaQuery = executeMeTTaQuery(intent);
-    console.log('MeTTa query:', mettaQuery);
+    })// calling ASI:One LLM
+//     const text = await res.text();
+// console.log("Raw ASI One response:", text);
 
-    // Step 3: Execute Web3 operation via uAgent
-    let result;
-    try {
-      result = await uagentBridge.sendRequestToUAgent(intent.type, intent.entities, 'web_user');
-      console.log('uAgent Web3 operation result:', result);
-    } catch (uagentError) {
-      console.log('uAgent not available');
-    }
+// const data = JSON.parse(text);
+    // Parse JSON
+    const data = await resp.json();
 
+    // Access the ChatResponse structure
+    console.log("Role:", data.message.role);
+    console.log("Content:", data.message.content);
+
+
+    // // Step 1: NLU - Convert natural language to intent
+    // const intent = await processQuery(query);
+    // console.log('Detected intent:', intent);
+
+    // // Step 2: MeTTa reasoning
+    // const mettaQuery = executeMeTTaQuery(intent);
+    // console.log('MeTTa query:', mettaQuery);
+
+    // // Step 3: Execute Web3 operation via uAgent
+    // let result;
+    // try {
+    //   result = await uagentBridge.sendRequestToUAgent(intent.type, intent.entities, 'web_user');
+    //   console.log('uAgent Web3 operation result:', result);
+    // } catch (uagentError) {
+    //   console.log('uAgent not available');
+    // }
+    // app.post('/uagent/request', async (req, res) => {
+    //   const { type, entities, userId } = req.body;
+    
+    //   try {
+    //     const result = await uagentBridge.sendRequestToUAgent(type, entities, userId);
+    //     res.json({ success: true, result });
+    //   } catch (err) {
+    //     console.error("uAgent error:", err);
+    //     res.status(500).json({ success: false, error: err.message });
+    //   }
+    // });
+
+    // res.json({
+    //   response: result.message,
+    //   intent: intent.type,
+    //   confidence: intent.confidence,
+    //   mettaQuery: mettaQuery,
+    //   timestamp: new Date().toISOString()
+    // });
+    // console.log(res.json());
+    // console.log(data.message.role)
     res.json({
-      response: result.message,
-      intent: intent.type,
-      confidence: intent.confidence,
-      mettaQuery: mettaQuery,
-      timestamp: new Date().toISOString()
-    });
+      role: data.message.role,
+      content: data.message.content
+    })
+    // console.log({
+    //   role: data.message.role,
+    //   content: data.message.content
+    // })
+
   } catch (error) {
     console.error('Error processing query:', error);
     res.status(500).json({

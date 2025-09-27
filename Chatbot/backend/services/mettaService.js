@@ -15,30 +15,7 @@ const KNOWLEDGE_BASE = {
     `,
     reasoning: "User wants to exchange tokens from one blockchain to another. This requires cross-chain bridge functionality."
   },
-  nft_mint: {
-    description: "Create a new NFT (Non-Fungible Token)",
-    requirements: ["nft_name", "nft_description"],
-    metta_template: `
-      (mint-nft
-        (name $nft_name)
-        (description $nft_description)
-        (user-intent "nft_mint")
-      )
-    `,
-    reasoning: "User wants to create a new NFT. This requires NFT minting contract interaction."
-  },
-  send_money: {
-    description: "Transfer tokens to another address",
-    requirements: ["recipient_address", "token_amount"],
-    metta_template: `
-      (send-tokens
-        (recipient $recipient_address)
-        (amount $token_amount)
-        (user-intent "send_money")
-      )
-    `,
-    reasoning: "User wants to send tokens to another wallet address. This requires standard token transfer functionality."
-  },
+  
   check_balance: {
     description: "Check wallet balance",
     requirements: [],
@@ -49,28 +26,7 @@ const KNOWLEDGE_BASE = {
     `,
     reasoning: "User wants to check their current wallet balance across different tokens."
   },
-  stake_tokens: {
-    description: "Stake tokens for rewards",
-    requirements: ["token_amount"],
-    metta_template: `
-      (stake-tokens
-        (amount $token_amount)
-        (user-intent "stake_tokens")
-      )
-    `,
-    reasoning: "User wants to stake tokens to earn rewards. This requires staking contract interaction."
-  },
-  provide_liquidity: {
-    description: "Provide liquidity to a DeFi pool",
-    requirements: ["token_amount"],
-    metta_template: `
-      (provide-liquidity
-        (amount $token_amount)
-        (user-intent "provide_liquidity")
-      )
-    `,
-    reasoning: "User wants to provide liquidity to earn trading fees. This requires DEX interaction."
-  },
+
   general_help: {
     description: "General help and information",
     requirements: [],
@@ -149,11 +105,7 @@ function explainMeTTaQuery(mettaQuery) {
   
   const explanations = {
     'swap-tokens': 'This query will initiate a cross-chain token swap operation',
-    'mint-nft': 'This query will create a new NFT with the specified properties',
-    'send-tokens': 'This query will transfer tokens to the specified recipient',
     'check-balance': 'This query will retrieve the current wallet balance',
-    'stake-tokens': 'This query will stake tokens for rewards',
-    'provide-liquidity': 'This query will add liquidity to a DeFi pool',
     'provide-help': 'This query will provide general assistance'
   };
   
