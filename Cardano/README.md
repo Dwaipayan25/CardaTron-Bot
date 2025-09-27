@@ -1,11 +1,25 @@
+lop.preInteraction(orderHash, tokenAddress, amount);
 
-# Cardano Swap Backend API Documentation
+# Cardano Swap: Unified Project Documentation
 
-This backend powers the Cardano cross-chain swap application, handling order management, relayer operations, and WebSocket notifications. It is built with Express.js, Sequelize ORM, and PostgreSQL.
+This repository implements a cross-chain atomic swap system for EVM ↔ Cardano, featuring trustless token exchanges, backend API, smart contracts, and a modern frontend. Below you'll find a unified architecture overview, backend API endpoints, model structure, and quick start steps.
 
 ---
 
-## Project Structure
+## 🏗️ Architecture Overview
+
+The system enables secure, decentralized swaps between EVM and Cardano using Hash-Time-Locked Contracts (HTLCs), relayer services, and WebSocket notifications. Key flows:
+
+- **EVM → Cardano**: Maker locks tokens on EVM, Resolver facilitates swap via Cardano
+- **Cardano → EVM**: Maker locks tokens on Cardano, Resolver facilitates swap via EVM
+
+Relayer monitors both chains, shares secrets, and coordinates atomic execution.
+
+---
+
+## 📦 Backend API & Model Structure
+
+### Project Structure
 
 ```
 backend/
@@ -36,10 +50,6 @@ backend/
 └── README.md
 ```
 
----
-
-## Models Structure
-
 ### Order Model (`models/Order.js`)
 
 Stores all swap order data:
@@ -60,9 +70,9 @@ Stores all swap order data:
 
 ---
 
-## API Endpoints
+### API Endpoints
 
-### Orders
+#### Orders
 - `GET /api/orders` — List all orders (supports pagination & filtering)
 - `GET /api/orders/:id` — Get order by ID
 - `POST /api/orders` — Create a new order
@@ -71,88 +81,135 @@ Stores all swap order data:
 - `PATCH /api/orders/:id/tx-hash` — Update transaction hashes for an order
 - `POST /api/orders/:id/accept` — Accept an order (resolver)
 
-### Relayer
+#### Relayer
 - `POST /api/relayer/monitor/:orderId` — Monitor order, update escrow tx hashes, and trigger secret request
 
-### Other
+#### Other
 - `GET /health` — Health check endpoint
 - `GET /api-docs` — Swagger API documentation
 
 ---
 
-## Example API Usage
+### Example API Usage
 
-### Create an Order
+#### Create an Order
 ```sh
 curl -X POST http://localhost:3000/api/orders \
-   -H "Content-Type: application/json" \
-   -d '{
-      "fromChain": "EVM",
-      "toChain": "Cardano",
-      "fromToken": "USDC",
-      "toToken": "ADA",
-      "fromAmount": "1000000",
-      "toAmount": "999999",
-      "makerSrcAddress": "0x...",
-      "makerDstAddress": "addr1...",
-      "hashlock": "0x...",
-      "salt": 123456,
-      "orderHash": "0x...",
-      "signature": "0x...",
-      "expiresAt": "2025-10-01T00:00:00Z"
-   }'
+  -H "Content-Type: application/json" \
+  -d '{
+    "fromChain": "EVM",
+    "toChain": "Cardano",
+    "fromToken": "USDC",
+    "toToken": "ADA",
+    "fromAmount": "1000000",
+    "toAmount": "999999",
+    "makerSrcAddress": "0x...",
+    "makerDstAddress": "addr1...",
+    "hashlock": "0x...",
+    "salt": 123456,
+    "orderHash": "0x...",
+    "signature": "0x...",
+    "expiresAt": "2025-10-01T00:00:00Z"
+  }'
 ```
 
-### Accept an Order
+#### Accept an Order
 ```sh
 curl -X POST http://localhost:3000/api/orders/<orderId>/accept \
-   -H "Content-Type: application/json" \
-   -d '{ "resolverAddress": "0x..." }'
+  -H "Content-Type: application/json" \
+  -d '{ "resolverAddress": "0x..." }'
 ```
 
-### Update Escrow Addresses
+#### Update Escrow Addresses
 ```sh
 curl -X PATCH http://localhost:3000/api/orders/<orderId>/escrow-addresses \
-   -H "Content-Type: application/json" \
-   -d '{ "escrowSrcAddress": "0x...", "escrowDstAddress": "0x..." }'
+  -H "Content-Type: application/json" \
+  -d '{ "escrowSrcAddress": "0x...", "escrowDstAddress": "0x..." }'
 ```
 
-### Update Transaction Hashes
+#### Update Transaction Hashes
 ```sh
 curl -X PATCH http://localhost:3000/api/orders/<orderId>/tx-hash \
-   -H "Content-Type: application/json" \
-   -d '{ "srcEscrowTxHash": "0x...", "dstEscrowTxHash": "0x..." }'
+  -H "Content-Type: application/json" \
+  -d '{ "srcEscrowTxHash": "0x...", "dstEscrowTxHash": "0x..." }'
 ```
 
-### Monitor Order (Relayer)
+#### Monitor Order (Relayer)
 ```sh
 curl -X POST http://localhost:3000/api/relayer/monitor/<orderId> \
-   -H "Content-Type: application/json" \
-   -d '{ "srcEscrowTxHash": "0x...", "dstEscrowTxHash": "0x..." }'
+  -H "Content-Type: application/json" \
+  -d '{ "srcEscrowTxHash": "0x...", "dstEscrowTxHash": "0x..." }'
 ```
 
 ---
 
-## Development Notes
-- Uses Sequelize ORM for PostgreSQL
-- Swagger annotations for API docs
-- WebSocket notifications for secret sharing
-- All business logic separated in controllers/services
+## 🚀 Quick Start Steps
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+- Blockfrost API key (Cardano)
+- Infura/Alchemy API key (EVM)
+
+### 1. Clone & Install
+```sh
+git clone <repository-url>
+cd cardano-swap-main
+npm install
+cd backend && npm install
+cd ../frontend && npm install
+cd ../contracts/evm && npm install
+cd ../contracts/cardano && npm install
+```
+
+### 2. Environment Setup
+Create `.env` files in each directory. See backend/README.md for examples.
+
+### 3. Database Setup
+```sh
+cd backend
+createdb cardano_swap
+# Tables auto-created on first run
+```
+
+### 4. Compile & Deploy Contracts
+```sh
+# EVM
+cd contracts/evm
+npm run compile
+# Cardano
+cd ../cardano
+npm run build
+```
+
+### 5. Start Backend & Frontend
+```sh
+cd backend
+npm run dev
+cd ../frontend
+npm run dev
+```
 
 ---
 
-## API Documentation
+## 📄 API Documentation
 
 Visit `http://localhost:3000/api-docs` for full Swagger docs and try out endpoints interactively.
 
 ---
 
-## Health Check
+## 🛡️ Security & Monitoring
 
-```sh
-curl http://localhost:3000/health
-```
+- All contracts use OpenZeppelin libraries for security
+- Timelock and safety deposit mechanisms
+- WebSocket notifications for swap status
+- Health checks at `/health`
 
 ---
 
-For more details, see the code comments and Swagger docs in the backend source files.
+## 🤝 Support & License
+
+For issues, questions, or contributions:
+- GitHub Issues
+- Inline code comments
+- MIT License
