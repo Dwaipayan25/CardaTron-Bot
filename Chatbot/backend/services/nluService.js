@@ -8,31 +8,11 @@ const INTENT_PATTERNS = {
     networks: ['ethereum', 'solana', 'polygon', 'arbitrum', 'optimism', 'bsc', 'binance'],
     confidence_threshold: 0.3
   },
-  nft_mint: {
-    keywords: ['mint', 'create', 'generate', 'make', 'nft', 'want to mint'],
-    tokens: ['nft', 'non-fungible', 'token', 'art', 'collectible'],
-    confidence_threshold: 0.3
-  },
-  send_money: {
-    keywords: ['send', 'transfer', 'pay', 'give', 'send money', 'help me send'],
-    tokens: ['money', 'funds', 'tokens', 'coins', 'crypto', 'ethereum', 'bitcoin', 'friend'],
-    confidence_threshold: 0.3
-  },
   check_balance: {
     keywords: ['balance', 'check', 'show', 'display', 'how much', 'what\'s my', 'wallet'],
     tokens: ['balance', 'funds', 'tokens', 'coins', 'crypto', 'wallet'],
     confidence_threshold: 0.3
   },
-  stake_tokens: {
-    keywords: ['stake', 'staking', 'delegate', 'lock', 'want to stake'],
-    tokens: ['tokens', 'coins', 'crypto', 'ethereum', 'solana'],
-    confidence_threshold: 0.3
-  },
-  provide_liquidity: {
-    keywords: ['liquidity', 'provide', 'add', 'pool', 'liquidity pool'],
-    tokens: ['liquidity', 'tokens', 'coins', 'crypto'],
-    confidence_threshold: 0.3
-  }
 };
 
 function calculateIntentConfidence(text, intentPattern) {

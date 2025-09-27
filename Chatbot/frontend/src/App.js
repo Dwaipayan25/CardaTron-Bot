@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff, Send, Bot, User, Loader2 } from 'lucide-react';
-import './App.css';
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mic, MicOff, Send, Bot, User, Loader2 } from "lucide-react";
+import "./App.css";
 
 const App = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
       text: "Hello! I'm your Web3 AI agent. I can help you with token swaps, NFT minting, sending money, and other blockchain operations. Just speak or type your request!",
-      sender: 'bot',
-      timestamp: new Date()
-    }
+      sender: "bot",
+      timestamp: new Date(),
+    },
   ]);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [recognition, setRecognition] = useState(null);
-  const [interimText, setInterimText] = useState('');
+  const [interimText, setInterimText] = useState("");
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -29,22 +29,23 @@ const App = () => {
 
   useEffect(() => {
     // Initialize speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
-      
+
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = true;
-      recognitionInstance.lang = 'en-US';
+      recognitionInstance.lang = "en-US";
 
       recognitionInstance.onstart = () => {
         setIsListening(true);
-        setInterimText('');
+        setInterimText("");
       };
 
       recognitionInstance.onresult = (event) => {
-        let finalTranscript = '';
-        let interimTranscript = '';
+        let finalTranscript = "";
+        let interimTranscript = "";
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
@@ -57,7 +58,7 @@ const App = () => {
 
         if (finalTranscript) {
           setInputText(finalTranscript);
-          setInterimText('');
+          setInterimText("");
           setIsListening(false);
         } else {
           setInterimText(interimTranscript);
@@ -65,14 +66,14 @@ const App = () => {
       };
 
       recognitionInstance.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
+        console.error("Speech recognition error:", event.error);
         setIsListening(false);
-        setInterimText('');
+        setInterimText("");
       };
 
       recognitionInstance.onend = () => {
         setIsListening(false);
-        setInterimText('');
+        setInterimText("");
       };
 
       setRecognition(recognitionInstance);
@@ -97,42 +98,99 @@ const App = () => {
     const userMessage = {
       id: Date.now(),
       text: text.trim(),
-      sender: 'user',
-      timestamp: new Date()
+      sender: "user",
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputText("");
     setIsProcessing(true);
 
     try {
-      const response = await fetch('/api/process-query', {
-        method: 'POST',
+      console.log("🚀 Starting API request for:", text.trim());
+      
+      const response = await fetch("/api/process-query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query: text.trim() }),
       });
+      
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response ok:", response.ok);
+      console.log("📡 Response headers:", response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ HTTP Error Response:", errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
 
       const data = await response.json();
+      console.log("✅ Full API Response:", data);
+      console.log("✅ Response type:", typeof data);
+      console.log("✅ Response keys:", Object.keys(data));
       
+      // Debug the message structure
+      if (data.message) {
+        console.log("📝 Message object:", data.message);
+        console.log("📝 Message type:", typeof data.message);
+        console.log("📝 Message keys:", Object.keys(data.message));
+      }
+
+      // Create proper bot message from response
+      let botText = "I received your message but couldn't process it properly.";
+      
+      // Try different possible response structures
+      if (data.content) {
+        // Direct content property (your current API response)
+        botText = data.content;
+      } else if (data.message && data.message.content) {
+        // Nested message.content structure
+        botText = data.message.content;
+      } else if (data.response) {
+        // Response property
+        botText = data.response;
+      } else if (data.message) {
+        // Direct message property
+        botText = data.message;
+      } else if (typeof data === 'string') {
+        // String response
+        botText = data;
+      }
+      
+      console.log("🤖 Final bot text:", botText);
+
       const botMessage = {
         id: Date.now() + 1,
-        text: data.response,
-        sender: 'bot',
-        timestamp: new Date()
+        text: botText,
+        sender: "bot",
+        timestamp: new Date(),
+        // Include additional data if available
+        intent: data.intent,
+        confidence: data.confidence,
+        mettaQuery: data.mettaQuery,
+        uagentResult: data.uagentResult,
+        // Include raw response for debugging
+        rawResponse: data
       };
 
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      console.error('Error processing query:', error);
+      console.error("❌ Error processing query:", error);
+      console.error("❌ Error name:", error.name);
+      console.error("❌ Error message:", error.message);
+      console.error("❌ Error stack:", error.stack);
+      
       const errorMessage = {
         id: Date.now() + 1,
-        text: "Sorry, I encountered an error processing your request. Please try again.",
-        sender: 'bot',
-        timestamp: new Date()
+        text: `Sorry, I encountered an error: ${error.message}. Please try again.`,
+        sender: "bot",
+        timestamp: new Date(),
+        error: error.message
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsProcessing(false);
     }
@@ -144,7 +202,7 @@ const App = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       processUserInput(inputText);
     }
@@ -171,18 +229,24 @@ const App = () => {
                 className={`message ${message.sender}`}
               >
                 <div className="message-avatar">
-                  {message.sender === 'user' ? <User size={20} /> : <Bot size={20} />}
+                  {message.sender === "user" ? (
+                    <User size={20} />
+                  ) : (
+                    <Bot size={20} />
+                  )}
                 </div>
                 <div className="message-content">
                   <div className="message-text">{message.text}</div>
                   <div className="message-time">
-                    {message.timestamp.toLocaleTimeString()}
+                    {message.timestamp
+                      ? new Date(message.timestamp).toLocaleTimeString()
+                      : ""}
                   </div>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
-          
+
           {isProcessing && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -200,7 +264,7 @@ const App = () => {
               </div>
             </motion.div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -238,7 +302,7 @@ const App = () => {
               <button
                 type="button"
                 onClick={isListening ? stopListening : startListening}
-                className={`voice-button ${isListening ? 'listening' : ''}`}
+                className={`voice-button ${isListening ? "listening" : ""}`}
                 disabled={isProcessing}
               >
                 {isListening ? <MicOff size={20} /> : <Mic size={20} />}

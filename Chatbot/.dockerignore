@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Documentation
+README.md
+docs/
+*.md
+
+# Temporary files
+tmp/
+temp/
