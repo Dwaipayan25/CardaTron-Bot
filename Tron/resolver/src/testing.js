@@ -1,0 +1,1 @@
+const resolverContract = new ethers.Contract(resolver_address, resolverABI, wallet)
