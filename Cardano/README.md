@@ -194,7 +194,7 @@ npm run dev
 
 ## 📄 API Documentation
 
-Visit `http://localhost:3000/api-docs` for full Swagger docs and try out endpoints interactively.
+Visit `http://81.15.150.182:3001/api-docs` for full Swagger docs and try out endpoints interactively.
 
 ---
 

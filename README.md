@@ -90,4 +90,13 @@ See `Tron/README.md` for usage and setup.
 
 ---
 
+## 🖥️ Deployment Example
+
+Below is a screenshot of our Cardano-Tron resolver VM running on Fluence Network:
+
+![Cardano-Tron Resolver VM on Fluence Network](./fluence.png)
+
+VM-ID:- vm id - 019987ae-0132-7201-98ea-545076203518
+---
+
 For detailed setup, API usage, and architecture, refer to the individual module READMEs.
