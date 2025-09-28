@@ -67,6 +67,14 @@ See `Tron/README.md` for usage and setup.
 
 ---
 
+## 🔑 Wallet Connection
+
+- **MetaMask**: Connect your EVM wallet by selecting "Connect Wallet" in the interface and approving the connection in the MetaMask browser extension.
+- **Lace**: Connect your Cardano wallet by choosing "Connect Wallet" and authorizing access through the Lace wallet popup.
+- **TronLink**: Connect your Tron wallet by clicking "Connect Wallet" and confirming the connection in the TronLink browser extension.
+
+---
+
 ## 🛡️ Security & Monitoring
 
 - OpenZeppelin libraries for contract security
